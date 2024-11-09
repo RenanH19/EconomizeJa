@@ -9,7 +9,7 @@
 
 <html>
 	<head>
-		<title>Clínica Médica ABC</title>
+		<title>EconomizeJa</title>
 		<link rel="icon" type="image/png" href="imagens/favicon.png"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -54,92 +54,58 @@
 				mysqli_query($conn, 'SET character_set_results=utf8');
 				
 				// Faz Select na Base de Dados
-				$sql = "SELECT ID_Medico, Nome, CRM, Dt_Nasc, ID_Espec, Foto FROM Medico WHERE ID_Medico = $id";
-
+				$sql = "SELECT ID_Produtos_Pedidos, Nome, Descricao, Quantidade, Concat('R$', Preco) as Preco, Concat('R$', Preco*Quantidade) as Total FROM Produtos_Pedidos INNER JOIN Produtos ON (fk_Produtos_ID_Produtos = ID_Produtos) WHERE ID_Produtos_Pedidos = $id";
 				//Inicio DIV form
 				echo "<div class='w3-responsive w3-card-4'>";
 				if ($result = mysqli_query($conn, $sql)) {
 					if(mysqli_num_rows($result) == 1){
 						$row = mysqli_fetch_assoc($result);
 						
-						$especialidade = $row['ID_Espec'];
-						$id_medico     = $row['ID_Medico'];
-						$nome          = $row['Nome'];
-						$CRM           = $row['CRM'];
-						$dataNasc      = $row['Dt_Nasc'];
-						$foto          = $row['Foto'];
+						$id_produto = $row["ID_Produtos_Pedidos"];
+                        $nome = $row["Nome"];
+                        $descricao = $row["Descricao"];
+                        $quantidade = $row["Quantidade"];
+                        $preco = $row["Preco"];
+                        $total = $row["Total"];
 									
 						// Faz Select na Base de Dados
-						$sqlG = "SELECT ID_Espec, Nome_Espec FROM Especialidade";
-							
+						$sqlG = "SELECT ID_Produtos, Nome FROM Produtos";
+				
 						$optionsEspec = array();
-						
+				
 						if ($result = mysqli_query($conn, $sqlG)) {
 							while ($row = mysqli_fetch_assoc($result)) {
-								$selected = "";
-								if ($row['ID_Espec'] == $especialidade)
-									$selected = "selected";
-								array_push($optionsEspec, "\t\t\t<option " . $selected . " value='". $row["ID_Espec"]."'>".$row["Nome_Espec"]."</option>\n");
-							}
-						}
+                       		array_push($optionsEspec, "\t\t\t<option value='". $row["ID_Produtos"]."'>".$row["Nome"]."</option>\n");
+					}
+				}
 
 						?>
 						<div class="w3-container w3-theme">
-							<h2>Altere os dados do Médico Cód. = [<?php echo $id_medico; ?>]</h2>
+							<h2>Altere os dados do pedido = [<?php echo $id_Produtos_Pedidos; ?>]</h2>
 						</div>
 						<form class="w3-container" action="medAtualizar_exe.php" method="post" enctype="multipart/form-data">
 						<table class='w3-table-all'>
 						<tr>
 							<td style="width:50%;">
 							<p>
-							<input type="hidden" id="Id" name="Id" value="<?php echo $id_medico; ?>">
+							<input type="hidden" id="Id" name="Id" value="<?php echo $id_Produtos_Pedidos; ?>">
 							<p>
-							<label class="w3-text-IE"><b>Nome</b></label>
-							<input class="w3-input w3-border w3-light-grey " name="Nome" type="text" pattern="[a-zA-Z\u00C0-\u00FF ]{10,100}$"
-									title="Nome entre 10 e 100 letras." value="<?php echo $nome; ?>" required></p>
-							<p>
-							<label class="w3-text-IE"><b>CRM</b>*</label>
-							<input class="w3-input w3-border w3-light-grey " name="CRM" id="CRM"  type="text" maxlength="15"
-						       placeholder="CRM/UF XXXX-XX" title="CRM/UF XXXX-XX" value="<?php echo $CRM; ?>" pattern="CRM\/([A-Z]{2}) [0-9]{4}-[0-9]{2}$" required></p>
-							<p>
-							<label class="w3-text-IE"><b>Data de Nascimento</b></label>
-							<input class="w3-input w3-border w3-light-grey " name="DataNasc" type="date"
-									placeholder="dd/mm/aaaa" title="dd/mm/aaaa"
-									title="Formato: dd/mm/aaaa" value="<?php echo $dataNasc; ?>"></p>
-							
-							<p><label class="w3-text-IE"><b>Especialidade</b>*</label>
-							<select name="Especialidade" id="Especialidade" class="w3-input w3-border w3-light-grey " required>
-
-							<?php
-								foreach($optionsEspec as $key => $value){
-									echo $value;
-								}
-							?>
+							<p><label class="w3-text-IE"><b>Nome do produto</b>*</label>
+							<select name="Nome do produto" id="Nome do produto" class="w3-input w3-border w3-light-grey " value= "<?php echo $nome; ?>" required>
+									<option value=""></option>
+								<?php
+									foreach($optionsEspec as $key => $value) {
+										$selected = ($value == $id_produto) ? "selected" : "";  // Se for igual ao valor atual, adiciona o atributo 'selected'
+                                    	echo "<option value='$value' $selected>$key</option>";
+									}
+								?>
 							</select>
+ 
+							<label class="w3-text-IE"><b>Quantidade</b></label>
+							<input class="w3-input w3-border w3-light-grey " name="DataNasc" type="number" min="1" max="999" step="1"
+							   placeholder="Quantidade" title="Quantidade" value="<?php echo $quantidade; ?>" required></p>
 							</p>
 						
-							</td>
-							<td>
-												
-							<p style="text-align:center"><label class="w3-text-IE" ><b>Minha Imagem para Identificação: </b></label></p>
-							<?php
-							if ($foto) {?>
-								<p style="text-align:center">
-									<img id="imagemSelecionada" class="w3-circle w3-margin-top" src="data:image/png;base64,<?= base64_encode($foto); ?>" />
-								</p> 
-								<?php
-							} else {
-								?>
-								<p style="text-align:center">
-									<img id="imagemSelecionada" class="w3-circle w3-margin-top" src="imagens/pessoa.jpg" />
-								</p>
-								<?php
-							}
-							?>
-							<p style="text-align:center"><label class="w3-btn w3-theme">Selecione uma Imagem
-							<input type="hidden" name="MAX_FILE_SIZE" value="16777215" />
-							<input type="file" id="Imagem" name="Imagem" accept="imagem/*" onchange="validaImagem(this);" /></label>
-							</p>
 							</td>
 						</tr>
 						<tr>

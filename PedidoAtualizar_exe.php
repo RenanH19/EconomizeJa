@@ -10,7 +10,7 @@
 <html>
 	<head>
 
-	  <title>Clínica Médica ABC</title>
+	  <title>EconomizeJa</title>
 	  <link rel="icon" type="image/png" href="imagens/favicon.png" />
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -39,10 +39,10 @@
 
 	<!-- Acesso ao BD-->
 	<?php
-		$nome    = $_POST['Nome'];
-		$CRM     = $_POST['CRM'];
-		$dtNasc  = $_POST['DataNasc'];
-		$espec   = $_POST['Especialidade'];
+		$nome    = $_POST['Produto'];
+		$descricao   = $_POST['Descricao'];
+		$dtNasc  = $_POST['Quantidade'];
+		$espec   = $_POST['Preco'];
 		
 		
 		 
@@ -61,12 +61,10 @@
 
 		// Faz Select na Base de Dados
 
-		if ($_FILES['Imagem']['size'] == 0) { // Não recebeu uma imagem binária
-			$sql = "INSERT INTO Medico (Nome, CRM, Dt_Nasc, ID_Espec, Foto) VALUES ('$nome','$CRM','$dtNasc', '$espec', NULL)";
-		} else {                              // Recebeu uma imagem binária
-			$imagem = addslashes(file_get_contents($_FILES['Imagem']['tmp_name'])); // Prepara para salvar em BD
-			$sql = "INSERT INTO Medico (Nome, CRM, Dt_Nasc, ID_Espec, Foto) VALUES ('$nome','$CRM','$dtNasc', '$espec','$imagem')";
-		}
+		$NomeID = "SELECT ID_Espec FROM Especialidade WHERE Nome_Espec = '$espec'";
+		$sql = "INSERT INTO (Nome, CRM, Dt_Nasc, ID_Espec, Foto) VALUES ('$nome','$CRM','$dtNasc', '$espec', NULL)";
+		
+		
 		?>
 		<div class='w3-responsive w3-card-4'>
 		<div class="w3-container w3-theme">

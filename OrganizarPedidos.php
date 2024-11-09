@@ -78,6 +78,7 @@
                     if (mysqli_num_rows($result) > 0) {
                         // Apresenta cada linha da tabela
                         while ($row = mysqli_fetch_assoc($result)) {
+                            $cod = $row["ID_Produtos_Pedidos"];
                             $id_produto = $row["ID_Produtos_Pedidos"];
                             $nome = $row["Nome"];
                             $descricao = $row["Descricao"];
