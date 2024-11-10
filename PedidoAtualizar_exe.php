@@ -1,94 +1,46 @@
-<!DOCTYPE html>
-<!-------------------------------------------------------------------------------
-    Desenvolvimento Web
-    PUCPR
-    Profa. Cristina V. P. B. Souza
-    Agosto/2022
----------------------------------------------------------------------------------->
-<!-- medIncluir_exe.php -->
+<?php
+require 'bd/conectaBD.php';
 
-<html>
-	<head>
+// Verifica se o formulário foi enviado
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = isset($_POST['Id']) ? (int) $_POST['Id'] : 0;
+    $nome_produto = mysqli_real_escape_string($conn, $_POST['Nome_produto']);
+    $descricao = mysqli_real_escape_string($conn, $_POST['descricao']);
+    $quantidade = (int) $_POST['quantidade'];
+    $preco = mysqli_real_escape_string($conn, $_POST['preco']);
+    $nicho = mysqli_real_escape_string($conn, $_POST['nicho']);
 
-	  <title>EconomizeJa</title>
-	  <link rel="icon" type="image/png" href="imagens/favicon.png" />
-	  <meta name="viewport" content="width=device-width, initial-scale=1">
-	  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-	  <link rel="stylesheet" href="css/customize.css">
-	</head>
-<body onload="w3_show_nav('menuMedico')">
-<!-- Inclui MENU.PHP  -->
-<?php require 'geral/menu.php';?>
-<?php require 'bd/conectaBD.php'; ?>
-<!-- Conteúdo Principal: deslocado para direita em 270 pixels quando a sidebar é visível -->
-<div class="w3-main w3-container" style="margin-left:270px;margin-top:117px;">
+    if ($id <= 0) {
+        die("ID inválido.");
+    }
 
-<div class="w3-panel w3-padding-large w3-card-4 w3-light-grey">
-  <p class="w3-large">
-  <div class="w3-code cssHigh notranslate">
-  <!-- Acesso em:-->
-	<?php
+    // Atualiza as informações na tabela Produtos
+    $sql = "UPDATE Produtos SET Nome = ?, Descricao = ?, Preco = ?, Nicho = ? WHERE ID_Produtos = 
+            (SELECT fk_Produtos_ID_Produtos FROM Produtos_Pedidos WHERE ID_Produtos_Pedidos = ?)";
 
-	date_default_timezone_set("America/Sao_Paulo");
-	$data = date("d/m/Y H:i:s",time());
-	echo "<p class='w3-small' > ";
-	echo "Acesso em: ";
-	echo $data;
-	echo "</p> "
-	?>
+    if ($stmt = mysqli_prepare($conn, $sql)) {
+        mysqli_stmt_bind_param($stmt, "ssssi", $nome_produto, $descricao, $preco, $nicho, $id);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            // Atualiza as informações na tabela Produtos_Pedidos
+            $sql2 = "UPDATE Produtos_Pedidos SET Quantidade = ? WHERE ID_Produtos_Pedidos = ?";
+            
+            if ($stmt2 = mysqli_prepare($conn, $sql2)) {
+                mysqli_stmt_bind_param($stmt2, "ii", $quantidade, $id);
+                mysqli_stmt_execute($stmt2);
+            }
+            
+            echo "<p>Produto atualizado com sucesso!</p>";
+            header("Location: OrganizarPedidos.php");
+            exit();
+        } else {
+            echo "<p>Erro ao atualizar produto: " . mysqli_error($conn) . "</p>";
+        }
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "<p>Erro ao preparar a consulta: " . mysqli_error($conn) . "</p>";
+    }
 
-	<!-- Acesso ao BD-->
-	<?php
-		$nome    = $_POST['Produto'];
-		$descricao   = $_POST['Descricao'];
-		$dtNasc  = $_POST['Quantidade'];
-		$espec   = $_POST['Preco'];
-		
-		
-		 
-		// Cria conexão
-		$conn = mysqli_connect($servername, $username, $password, $database);
-
-		// Verifica conexão
-		if (!$conn) {
-			die("<strong> Falha de conexão: </strong>" . mysqli_connect_error());
-		}
-		// Configura para trabalhar com caracteres acentuados do português
-		mysqli_query($conn,"SET NAMES 'utf8'");
-		mysqli_query($conn,'SET character_set_connection=utf8');
-		mysqli_query($conn,'SET character_set_client=utf8');
-		mysqli_query($conn,'SET character_set_results=utf8');
-
-		// Faz Select na Base de Dados
-
-		$NomeID = "SELECT ID_Espec FROM Especialidade WHERE Nome_Espec = '$espec'";
-		$sql = "INSERT INTO (Nome, CRM, Dt_Nasc, ID_Espec, Foto) VALUES ('$nome','$CRM','$dtNasc', '$espec', NULL)";
-		
-		
-		?>
-		<div class='w3-responsive w3-card-4'>
-		<div class="w3-container w3-theme">
-		<h2>Inclusão de Novo Médico</h2>
-		</div>
-		<?php
-		if ($result = mysqli_query($conn, $sql)) {
-			echo "<p>&nbsp;Registro cadastrado com sucesso! </p>";
-		} else {
-			echo "<p>&nbsp;Erro executando INSERT: " . mysqli_error($conn . "</p>");
-		}
-        echo "</div>";
-		mysqli_close($conn);  //Encerra conexao com o BD
-
-	?>
-  </div>
-</div>
-
-
-	<?php require 'geral/sobre.php';?>
-	<!-- FIM PRINCIPAL -->
-	</div>
-	<!-- Inclui RODAPE.PHP  -->
-	<?php require 'geral/rodape.php';?>
-	
-</body>
-</html>
+    mysqli_close($conn);
+}
+?>

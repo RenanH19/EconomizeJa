@@ -13,10 +13,13 @@ global $username;
 global $password;
 global $database;
 
-$servername = "localhost:3306";
+$servername = "localhost";
 $username = "root";
 $password = "";
 $database = "BDPROJETO2";
+
+$conn = mysqli_connect($servername, $username, $password, $database);
+
 ?>
 
 

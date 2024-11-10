@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-<!-- OrganizarPedidos.php -->
-
 <html>
 <head>
-    <title>Produtos</title>
+    <title>Carrinho de Compras</title>
     <link rel="icon" type="image/png" href="imagens/favicon.ico"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -33,13 +31,13 @@
 
         <!-- Título da seção -->
         <div class="w3-container w3-theme">
-            <h2>Listagem dos produtos</h2>
+            <h2>Itens no Carrinho</h2>
         </div>
 
-        <!-- Acesso ao Banco de Dados e exibição dos produtos -->
+        <!-- Acesso ao Banco de Dados e exibição dos produtos no carrinho -->
         <?php
 
-        // Cria a conexão com o banco de dados
+        // Conexão com o banco de dados
         $conn = mysqli_connect($servername, $username, $password, $database);
 
         // Verifica a conexão
@@ -55,70 +53,45 @@
         mysqli_query($conn, 'SET character_set_client=utf8');
         mysqli_query($conn, 'SET character_set_results=utf8');
 
-        // Query para buscar os dados
+        // Query para buscar os itens do carrinho
         $sql = "
             SELECT 
-                ID_Produtos_Pedidos, 
-                Nome, 
-                Descricao, 
-                Quantidade, 
-                Nicho, 
-                CONCAT('R$', Preco) AS Preco, 
-                CONCAT('R$', Preco * Quantidade) AS Total 
-            FROM Produtos_Pedidos 
-            INNER JOIN Produtos ON fk_Produtos_ID_Produtos = ID_Produtos 
-            ORDER BY ID_Produtos_Pedidos
+                Pedido.ID_Pedido,
+                Produtos.Nome,
+                Produtos.Descricao,
+                Pedido.Data
+            FROM Pedido
+            INNER JOIN Produtos ON Pedido.fk_Produto_ID_Produto = Produtos.ID_Produtos
+            ORDER BY Pedido.ID_Pedido
         ";
 
         echo "<div class='w3-responsive w3-card-4'>";
 
-        // Executa a query e verifica se há resultados
         if ($result = mysqli_query($conn, $sql)) {
             echo "<table class='w3-table-all'>";
             echo "<tr>
-                    <th width='7%'>ID Produto</th>
-                    <th width='14%'>Nome</th>
-                    <th width='14%'>Descrição</th>
-                    <th width='7%'>Quantidade</th>
-                    <th width='7%'>Nicho</th>
-                    <th width='7%'>Preço</th>
-                    <th width='7%'>Valor total</th>
-                    <th width='7%'> </th>
-                    <th width='7%'> </th>
+                    <th>ID Pedido</th>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Data do Pedido</th>
                   </tr>";
 
-            // Exibe os dados de cada produto
             if (mysqli_num_rows($result) > 0) {
                 while ($row = mysqli_fetch_assoc($result)) {
-                    $cod = $row["ID_Produtos_Pedidos"];
-                    $id_produto = $row["ID_Produtos_Pedidos"];
-                    $nome = $row["Nome"];
-                    $descricao = $row["Descricao"];
-                    $quantidade = $row["Quantidade"];
-                    $nicho = $row["Nicho"];
-                    $preco = $row["Preco"];
-                    $total = $row["Total"];
-
                     echo "<tr>
-                            <td>{$id_produto}</td>
-                            <td>{$nome}</td>
-                            <td>{$descricao}</td>
-                            <td>{$quantidade}</td>
-                            <td>{$nicho}</td>
-                            <td>{$preco}</td>
-                            <td>{$total}</td>
-                            <td><a href='ProdutoAdicionar_exe.php?id={$cod}'><img src='imagens/mais.png' title='Adicionar Pedido' width='24'></a></td>
-                            <td><a href='PedidoAtualizar.php?id={$cod}'><img src='imagens/lapis.png' title='Editar Pedido' width='24'></a></td>
-                            <td><a href='PedidoExcluir.php?id={$cod}'><img src='imagens/Delete.png' title='Excluir Pedido' width='24'></a></td>
+                            <td>{$row['ID_Pedido']}</td>
+                            <td>{$row['Nome']}</td>
+                            <td>{$row['Descricao']}</td>
+                            <td>{$row['Data']}</td>
                           </tr>";
                 }
             } else {
-                echo "<tr><td colspan='9'>Nenhum produto encontrado.</td></tr>";
+                echo "<tr><td colspan='4'>Nenhum item no carrinho.</td></tr>";
             }
             echo "</table>";
             echo "</div>";
         } else {
-            echo "Erro executando SELECT: " . mysqli_error($conn);
+            echo "Erro ao consultar os produtos no pedido: " . mysqli_error($conn);
         }
 
         // Fecha a conexão com o banco de dados
