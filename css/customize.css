@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=SUSE:wght@100..800&display=swap');
+:root{
+    --primary-font: 'Roboto Mono', monospace;
+}
+body{
+    font-family: var(--primary-font);
+}
 .w3-theme {
     color: #ffff !important;
     background-color: #107336 !important
@@ -23,5 +30,6 @@
     width: 20%;
     height: auto;
 }
+
 
 

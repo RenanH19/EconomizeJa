@@ -109,7 +109,7 @@
                             <td>{$total}</td>
                             <td><a href='ProdutoAdicionar_exe.php?id={$cod}'><img src='imagens/mais.png' title='Adicionar Pedido' width='24'></a></td>
                             <td><a href='PedidoAtualizar.php?id={$cod}'><img src='imagens/lapis.png' title='Editar Pedido' width='24'></a></td>
-                            <td><a href='PedidoExcluir.php?id={$cod}'><img src='imagens/Delete.png' title='Excluir Pedido' width='24'></a></td>
+                            <td><a href='ProdutoExcluir.php?id={$cod}'><img src='imagens/lixeira.png' title='Excluir Pedido' width='24'></a></td>
                           </tr>";
                 }
             } else {

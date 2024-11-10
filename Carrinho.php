@@ -74,19 +74,25 @@
                     <th>Nome</th>
                     <th>Descrição</th>
                     <th>Data do Pedido</th>
+                    <th>Excluir</th>
                   </tr>";
 
             if (mysqli_num_rows($result) > 0) {
                 while ($row = mysqli_fetch_assoc($result)) {
+                    // Adicionando o ícone de lixeira como link para exclusão
                     echo "<tr>
                             <td>{$row['ID_Pedido']}</td>
                             <td>{$row['Nome']}</td>
                             <td>{$row['Descricao']}</td>
                             <td>{$row['Data']}</td>
+                            <td><a href='excluirCarrinho.php?id={$row['ID_Pedido']}'  title='Excluir'>
+                                    <img src='imagens/lixeira.png' title='Excluir Pedido' width='24'>
+                                  </a>
+                            </td>
                           </tr>";
                 }
             } else {
-                echo "<tr><td colspan='4'>Nenhum item no carrinho.</td></tr>";
+                echo "<tr><td colspan='5'>Nenhum item no carrinho.</td></tr>";
             }
             echo "</table>";
             echo "</div>";
