@@ -1,12 +1,8 @@
-DROP DATABASE IF EXISTS BDPROJETO2;
+DROP DATABASE BDPROJETO2;
 CREATE DATABASE BDPROJETO2; 
-
- 
-
 USE BDPROJETO2; 
 
  
-
 CREATE TABLE Usuario ( 
 
     ID_Usuario INT PRIMARY KEY, 
@@ -61,23 +57,13 @@ CREATE TABLE Estabelecimento (
 
  
 
-CREATE TABLE Pedido ( 
 
-    ID_Pedido INT PRIMARY KEY, 
-
-    Data DATE, 
-
-    fk_Usuario_ID_Usuario INT, 
-
-    fk_Pagamento_ID_Pagamento INT 
-
-); 
 
  
 
 CREATE TABLE Produtos ( 
 
-    ID_Produtos INT PRIMARY KEY, 
+    ID_Produtos INT auto_increment PRIMARY KEY, 
 
     Nicho VARCHAR(20), 
 
@@ -89,11 +75,16 @@ CREATE TABLE Produtos (
 
 ); 
 
+CREATE TABLE Pedido ( 
+    ID_Pedido INT AUTO_INCREMENT PRIMARY KEY, 
+    fk_Produto_ID_Produto INT, 
+    Data DATE 
+);
  
 
 CREATE TABLE Produtos_Pedidos ( 
 
-    ID_Produtos_Pedidos INT PRIMARY KEY, 
+    ID_Produtos_Pedidos INT auto_increment KEY, 
 
     Quantidade INT, 
 
@@ -186,34 +177,6 @@ ALTER TABLE Estabelecimento ADD CONSTRAINT FK_Estabelecimento_2
     REFERENCES Cidade (ID_Cidade) 
 
     ON DELETE RESTRICT; 
-
-  
-
-ALTER TABLE Pedido ADD CONSTRAINT FK_Pedido_2 
-
-    FOREIGN KEY (fk_Usuario_ID_Usuario) 
-
-    REFERENCES Usuario (ID_Usuario) 
-
-    ON DELETE CASCADE; 
-
-  
-
-ALTER TABLE Pedido ADD CONSTRAINT FK_Pedido_3 
-
-    FOREIGN KEY (fk_Pagamento_ID_Pagamento) 
-
-    REFERENCES Pagamento (ID_Pagamento) 
-
-    ON DELETE CASCADE; 
-
-  
-
-ALTER TABLE Produtos_Pedidos ADD CONSTRAINT FK_Produtos_Pedidos_2 
-
-    FOREIGN KEY (fk_Produtos_ID_Produtos) 
-
-    REFERENCES Produtos (ID_Produtos); 
 
   
 
