@@ -56,11 +56,6 @@ CREATE TABLE Estabelecimento (
 ); 
 
  
-
-
-
- 
-
 CREATE TABLE Produtos ( 
 
     ID_Produtos INT auto_increment PRIMARY KEY, 
